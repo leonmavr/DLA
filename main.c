@@ -1,15 +1,15 @@
 #include "camera.h"
+#include "utils.h"
 #include <stdio.h>
 
 int main() {
   printf("start\n");
   scene_init(0, 0, 300, 70, 70);
-  sphere_t spheres[3];
-  spheres[0] = sphere_make(0, 25, 600, 100, 0, 0, 200);
-  spheres[1] = sphere_make(100, 50, 700, 100, 200, 0, 0);
-  spheres[2] = sphere_make(-50, 100, 2000, 550, 0, 200, 50);
-  for (int i = 0; i < sizeof(spheres) / sizeof(spheres[0]); ++i) {
-    sphere_write(&spheres[i]);
+  for (int i = 0; i < 300 + xrandom() % 200; ++i) {
+    sphere_t sphere = sphere_make(
+        -600 + xrandom() % 1200, -400 + xrandom() % 800, 800, 30,
+        150 + xrandom() % 50, 150 + xrandom() % 50, 150 + xrandom() % 50);
+    sphere_write(&sphere);
   }
   pbuffer_save("output.ppm");
   buffer_free();

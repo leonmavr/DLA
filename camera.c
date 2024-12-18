@@ -77,7 +77,7 @@ void sphere_write(sphere_t *sphere) {
   // Extract sphere properties
   float rad = sphere->rad;
   vec3f_t origin = sphere->origin;
-  vec3u_t color = sphere->color;
+  vec3u_t base_color = sphere->color;
   float cam_x = scene.camera.cx;
   float cam_y = scene.camera.cy;
   float cam_z = (scene.camera.f > 0)
@@ -97,8 +97,20 @@ void sphere_write(sphere_t *sphere) {
         float depth = (sphere->origin.x - cam_x) * (sphere->origin.x - cam_x) +
                       (sphere->origin.y - cam_y) * (sphere->origin.y - cam_y) +
                       (sphere->origin.z - cam_z) * (sphere->origin.z - cam_z);
-        // write color only if the depth is closer than what's in the dbuffer
-        const uint32_t u32_color = (color.x << 16) | (color.y << 8) | color.z;
+
+        // Compute brightness as a gradient
+        float dist_from_center = sqrtf(dx * dx + dy * dy);
+        float gradient = 1.0f - (dist_from_center / rad); // Normalize to [0, 1]
+        gradient = UT_MAX(gradient, 0.0f);                // Clamp to [0, 1]
+
+        gradient = 0.15f + 0.85f * UT_MAX(0.0f, UT_MIN(1.0f, gradient));
+
+        // Compute the shaded color
+        uint8_t r = (uint8_t)(base_color.x * gradient);
+        uint8_t g = (uint8_t)(base_color.y * gradient);
+        uint8_t b = (uint8_t)(base_color.z * gradient);
+        const uint32_t u32_color = (r << 16) | (g << 8) | b;
+
         int px = projected.x;
         int py = projected.y;
         dbuffer_write(px, py, depth, u32_color);
