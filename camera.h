@@ -37,11 +37,10 @@ typedef struct {
 extern scene_t scene;
 
 sphere_t sphere_make(float x0, float y0, float z0, float rad, uint8_t r, uint8_t g, uint8_t b);
-void pbuffer_write(int x, int y, uint8_t r, uint8_t g, uint8_t b);
 
 void sphere_write(sphere_t* sphere);
 void pbuffer_save(const char* filename);
-bool dbuffer_write(int x, int y, float dist);
+void dbuffer_write(int x, int y, float dist, uint32_t color);
 
 void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg);
 void buffer_free();
