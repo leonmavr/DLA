@@ -1,2 +1,2 @@
 all:
-	gcc camera.c main.c -lm -lSDL2
+	gcc camera.c sdl_wrapper.c main.c -lm -lSDL2
