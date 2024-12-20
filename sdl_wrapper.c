@@ -1,5 +1,4 @@
 #include "sdl_wrapper.h"
-#include "utils.h"
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -66,18 +65,6 @@ static inline int lmap_int(int x, int a, int b, int c, int d) {
   float t = (float)(x - a) / (b - a);
   return lerp_int(c, d, t);
 }
-
-#if 0
-/** Linear interpolation (lerp) between two scalars */
-static inline float lerp_float(float a, float b, float t) {
-  return floor(a + t * (b - a));
-}
-
-static inline float lmap_float(float x, float a, float b, float c, float d) {
-  float t = (x - a) / (b - a);
-  return lerp_float(c, d, t);
-}
-#endif
 
 bool sdl_context_render(sdl_context_t *context, uint32_t **array, int width,
                         int height) {
