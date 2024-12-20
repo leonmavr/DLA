@@ -7,7 +7,7 @@ int main() {
   printf("start\n");
 
   // Initialize the scene
-  scene_init(0, 0, 300, 70, 70);
+  scene_init(0, 0, 300, 40, 30);
 
   // Add spheres to the scene
   for (int i = 0; i < 300 + xrandom() % 200; ++i) {
@@ -21,8 +21,7 @@ int main() {
   int width = scene.camera.boundary.width;
   int height = scene.camera.boundary.height;
 
-  sdl_context_t *context =
-      sdl_context_create("Ray-Traced Scene", width, height);
+  sdl_context_t *context = sdl_context_create("Ray-Traced Scene", 180, 260);
   if (!context) {
     return 1;
   }

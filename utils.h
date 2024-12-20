@@ -21,6 +21,8 @@ static inline float lmap_float(float x, float a, float b, float c, float d) {
     return lerp_float(c, d, t);
 }
 
+
+
 /* Random number generator - originally by @Skeeto */
 enum { XRAND_MAX = 0x7fffffff, LGC_FULL_PERIOD = 0x3243f6a8885a308d};
 

@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -44,5 +45,6 @@ void dbuffer_write(int x, int y, float dist, uint32_t color);
 
 void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg);
 void buffer_free();
+void render_to_sdl(SDL_Renderer *renderer);
 
 #endif // CAMERA_H

@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "utils.h"
+#include <SDL2/SDL.h>
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
@@ -155,4 +156,23 @@ void buffer_free() {
   }
   free(scene.pbuffer);
   free(scene.dbuffer);
+}
+
+// Function to render the pixel buffer to an SDL window
+void render_to_sdl(SDL_Renderer *renderer) {
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0,
+                         SDL_ALPHA_OPAQUE); // Clear with black
+  SDL_RenderClear(renderer);
+
+  for (int r = 0; r < scene.camera.boundary.height; ++r) {
+    for (int c = 0; c < scene.camera.boundary.width; ++c) {
+      uint32_t color = scene.pbuffer[r][c];
+      uint8_t b = color & 0xff, g = (color >> 8) & 0xff,
+              r = (color >> 16) & 0xff;
+      printf("rendering\n");
+      SDL_SetRenderDrawColor(renderer, r, g, b, SDL_ALPHA_OPAQUE);
+      SDL_RenderDrawPoint(renderer, c, r);
+    }
+  }
+  SDL_RenderPresent(renderer);
 }
