@@ -16,7 +16,7 @@ typedef struct {
 
 sdl_context_t *sdl_context_create(const char *title, int width, int height);
 void sdl_context_release(sdl_context_t *context);
-bool sdl_context_render(sdl_context_t *context, uint32_t **array, int width,
+bool sdl_context_render(sdl_context_t *context, uint32_t **img_raw, int width,
                         int height);
 
 #endif // SDL_WRAPPER_H

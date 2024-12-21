@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef MIN
+#define MIN(a, b) ((a) < (b)) ? (a) : (b)
+#endif
+#ifndef MAX
+#define MAX(a, b) ((a) > (b)) ? (a) : (b)
+#endif
 sdl_context_t *sdl_context_create(const char *title, int width, int height) {
   sdl_context_t *ret = malloc(sizeof(sdl_context_t));
   if (!ret) {
@@ -61,17 +67,16 @@ static inline int lerp_int(int a, int b, float t) {
   return (int)(a + t * (b - a));
 }
 
-static inline int lmap_int(int x, int a, int b, int c, int d) {
-  float t = (float)(x - a) / (b - a);
-  return lerp_int(c, d, t);
+static inline int lmap_int(int x, int from1, int from2, int to1, int to2) {
+  float t = (float)(x - from1) / (from2 - from1);
+  return lerp_int(to1, to2, t);
 }
 
-bool sdl_context_render(sdl_context_t *context, uint32_t **array, int width,
+bool sdl_context_render(sdl_context_t *context, uint32_t **img_raw, int width,
                         int height) {
   SDL_Event e;
   bool is_done = false;
 
-  // Handle events
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
       is_done = true;
@@ -79,7 +84,6 @@ bool sdl_context_render(sdl_context_t *context, uint32_t **array, int width,
     }
   }
 
-  // Lock texture to access its pixel buffer
   void *pixels;
   int pitch;
   if (SDL_LockTexture(context->texture, NULL, &pixels, &pitch) != 0) {
@@ -87,32 +91,23 @@ bool sdl_context_render(sdl_context_t *context, uint32_t **array, int width,
     return is_done;
   }
 
-  // Get window dimensions
   int wwidth = 0, wheight = 0;
   SDL_GetWindowSize(context->window, &wwidth, &wheight);
-
-  // Iterate over texture dimensions
   for (int r = 0; r < wheight; ++r) {
     uint32_t *row = (uint32_t *)((uint8_t *)pixels + r * pitch);
-
-    // Map each row to the source array
     int source_r = lmap_int(r, 0, wheight - 1, 0, height - 1);
-
     for (int c = 0; c < wwidth; ++c) {
       int source_c = lmap_int(c, 0, wwidth - 1, 0, width - 1);
-
-      // Ensure mapped indices are within bounds
       if (source_r >= 0 && source_r < height && source_c >= 0 &&
           source_c < width) {
-        row[c] = array[source_r][source_c];
+        row[c] = img_raw[source_r][source_c];
       } else {
-        row[c] = 0; // Default to black if out of bounds
+        row[c] = 0;
       }
     }
   }
 
   SDL_UnlockTexture(context->texture);
-
   // Render the texture
   SDL_RenderClear(context->renderer);
   SDL_RenderCopy(context->renderer, context->texture, NULL, NULL);
