@@ -67,9 +67,10 @@ static inline int lerp_int(int a, int b, float t) {
   return (int)(a + t * (b - a));
 }
 
-static inline int lmap_int(int x, int from1, int from2, int to1, int to2) {
-  float t = (float)(x - from1) / (from2 - from1);
-  return lerp_int(to1, to2, t);
+static inline int lmap_int(int x, int from_min, int from_max, int to_min,
+                           int to_max) {
+  float t = (float)(x - from_min) / (from_max - from_min);
+  return lerp_int(to_min, to_max, t);
 }
 
 bool sdl_context_render(sdl_context_t *context, uint32_t **img_raw, int width,
@@ -95,15 +96,12 @@ bool sdl_context_render(sdl_context_t *context, uint32_t **img_raw, int width,
   SDL_GetWindowSize(context->window, &wwidth, &wheight);
   for (int r = 0; r < wheight; ++r) {
     uint32_t *row = (uint32_t *)((uint8_t *)pixels + r * pitch);
-    int source_r = lmap_int(r, 0, wheight - 1, 0, height - 1);
+    int r_idx =
+        MIN(MAX(lmap_int(r, 0, wheight - 1, 0, height - 1), 0), height - 1);
     for (int c = 0; c < wwidth; ++c) {
-      int source_c = lmap_int(c, 0, wwidth - 1, 0, width - 1);
-      if (source_r >= 0 && source_r < height && source_c >= 0 &&
-          source_c < width) {
-        row[c] = img_raw[source_r][source_c];
-      } else {
-        row[c] = 0;
-      }
+      int c_idx =
+          MIN(MAX(lmap_int(c, 0, wwidth - 1, 0, width - 1), 0), width - 1);
+      row[c] = img_raw[r_idx][c_idx];
     }
   }
 
