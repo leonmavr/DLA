@@ -26,27 +26,8 @@ typedef struct {
   node_t *root;
 } octree_t;
 
-
-typedef struct {
-    double coordinates[3];
-    int id;
-} Point;
-
-typedef struct OctreeNode {
-    double center[3];
-    double half_size;
-    Point *point;
-    struct OctreeNode *children[MAX_CHILDREN];
-} OctreeNode;
-
-typedef struct {
-    OctreeNode *root;
-    double boundary[3 * 2];
-} Octree;
-
 node_t *node_new(cuboid_t *boundary);
-// TODO: implement this
-void octree_free(Octree *tree);
+void octree_free(octree_t *tree);
 void octree_insert(octree_t *octree, point_t point);
 point_t octree_nearest_neighbor(octree_t *octree, point_t query);
 

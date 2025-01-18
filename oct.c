@@ -1,3 +1,4 @@
+#include "oct.h"
 #include <float.h>
 #include <math.h>
 #include <stdbool.h>
@@ -5,26 +6,6 @@
 #include <stdlib.h>
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
-
-typedef struct {
-  int x0, y0, z0, x1, y1, z1;
-} cuboid_t;
-
-typedef struct {
-  int x, y, z;
-  size_t id;
-} point_t;
-
-typedef struct node {
-  cuboid_t boundary;
-  size_t count;
-  point_t *points;
-  struct node *children[8];
-} node_t;
-
-typedef struct {
-  node_t *root;
-} octree_t;
 
 node_t *node_new(cuboid_t *boundary);
 static bool node_is_leaf(node_t *node);
@@ -82,8 +63,7 @@ node_t *node_new(cuboid_t *boundary) {
   node_t *node = malloc(sizeof(node_t));
   node->boundary = *boundary;
   node->count = 0;
-  node->points =
-      malloc(MAX_CHILDREN * sizeof(point_t));
+  node->points = malloc(MAX_CHILDREN * sizeof(point_t));
   for (int i = 0; i < 8; ++i)
     node->children[i] = NULL;
   return node;
@@ -157,4 +137,24 @@ point_t octree_nearest_neighbor(octree_t *octree, point_t query) {
   double best_dist_squared = DBL_MAX;
   node_nearest_neighbor(octree->root, query, &nearest, &best_dist_squared);
   return nearest;
+}
+
+static void node_free(node_t *node) {
+  if (!node)
+    return;
+  free(node->points);
+  for (int i = 0; i < 8; ++i) {
+    if (node->children[i]) {
+      node_free(node->children[i]);
+      node->children[i] = NULL;
+    }
+  }
+  free(node);
+}
+
+void octree_free(octree_t *octree) {
+  if (!octree || !octree->root)
+    return;
+  node_free(octree->root);
+  octree->root = NULL; // Avoid dangling pointer
 }
