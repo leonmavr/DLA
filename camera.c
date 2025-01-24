@@ -58,7 +58,9 @@ void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg) {
   for (int row = 0; row < scene.camera.boundary.height; ++row) {
     for (int col = 0; col < scene.camera.boundary.width; ++col) {
       scene.dbuffer[row][col] = FLT_MAX;
-      scene.pbuffer[row][col] = 100;
+      // assuming little-endian 
+      char color[4] = {0xD0 /* B */, 0x00 /* G */, 0x0F /* R */, 0x00 /* pre-padding */};
+      scene.pbuffer[row][col] = *(uint32_t *)color;
     }
   }
 }
