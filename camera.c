@@ -28,7 +28,6 @@ static vec2i_t cam_project(float x, float y, float z, bool *is_visible) {
 }
 
 void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg) {
-  // scene.init = scene_init;
   scene.camera.project = cam_project;
   scene.camera.cx = cx;
   scene.camera.cy = cy;
@@ -58,11 +57,16 @@ void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg) {
   for (int row = 0; row < scene.camera.boundary.height; ++row) {
     for (int col = 0; col < scene.camera.boundary.width; ++col) {
       scene.dbuffer[row][col] = FLT_MAX;
-      // assuming little-endian 
-      char color[4] = {0xD0 /* B */, 0x00 /* G */, 0x0F /* R */, 0x00 /* pre-padding */};
-      scene.pbuffer[row][col] = *(uint32_t *)color;
+      scene.pbuffer[row][col] = *(uint32_t *)scene.bg_color;
     }
   }
+}
+
+void scene_background(uint8_t r, uint8_t g, uint8_t b) {
+  // assuming little-endian
+  scene.bg_color[0] = b;
+  scene.bg_color[1] = g;
+  scene.bg_color[2] = r;
 }
 
 void dbuffer_write(int x, int y, float dist, uint32_t color) {

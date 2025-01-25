@@ -1,13 +1,15 @@
 #include "camera.h"
+#include "oct.h"
 #include "sdl_wrapper.h"
 #include "utils.h"
 
 int main() {
-  scene_init(0, 0, 300, 80, 70);
-  for (int i = 0; i < 300 + xrandom() % 200; ++i) {
+  scene_background(0, 50, 180);
+  scene_init(0, 0, 600, 80, 70);
+  for (int i = 0; i < 3000 + xrandom() % 2000; ++i) {
     sphere_t sphere = sphere_make(
-        -600 + xrandom() % 1200, -400 + xrandom() % 800, 800, 30,
-        150 + xrandom() % 50, 150 + xrandom() % 50, 150 + xrandom() % 50);
+        -600 + xrandom() % 1200, -400 + xrandom() % 800, 800 + xrandom() % 800,
+        8, 150 + xrandom() % 50, 150 + xrandom() % 50, 150 + xrandom() % 50);
     sphere_write(&sphere);
   }
 

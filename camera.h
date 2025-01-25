@@ -26,6 +26,7 @@ typedef struct {
   camera_t camera;
   float **dbuffer;        // depth buffer - depth of each point
   uint32_t **pbuffer;     // color buffer - color of each point
+  uint8_t bg_color[4];    // background color  
   void (*init)(float cx, float cy, float f, float fovx_deg, float fovy_deg);
 } scene_t;
 
@@ -44,6 +45,7 @@ void pbuffer_save(const char* filename);
 void dbuffer_write(int x, int y, float dist, uint32_t color);
 
 void scene_init(float cx, float cy, float f, float fovx_deg, float fovy_deg);
+void scene_background(uint8_t r, uint8_t g, uint8_t b);
 void buffer_free();
 void render_to_sdl(SDL_Renderer *renderer);
 
